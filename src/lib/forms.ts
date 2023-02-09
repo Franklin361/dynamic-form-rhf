@@ -1,6 +1,8 @@
 import { FormSection, InputProps } from '../types';
 
-export const forms: { [keyof in FormSection]: InputProps[] } =
+
+
+export const forms: { [K in FormSection]: InputProps[] } =
 {
 
     register: [
