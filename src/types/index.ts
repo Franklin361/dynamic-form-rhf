@@ -1,12 +1,17 @@
+import { OptionalObjectSchema, TypeOfShape } from 'yup/lib/object'
+import { AnyObject } from 'yup/lib/types';
+
+export type FormSection = 'register' | 'another'
 
 export interface InputProps {
     type: 'text' | 'radio' | 'email' | 'password' | 'select' | 'checkbox'
     name: string
     value: string | number | boolean
-    validations: Validation[]
     placeholder?: string
-    typeValue?: 'string' | 'boolean'
     label?: string
+
+    typeValue?: 'boolean' | 'number'
+    validations?: Validation[]
     options?: Opt[]
 }
 
@@ -22,6 +27,10 @@ export interface Validation {
     ref?: string
 }
 
-export type FormSection = 'register' | 'another'
+export type SchemaForm = OptionalObjectSchema<{
+    [x: string]: any;
+}, AnyObject, TypeOfShape<{
+    [x: string]: any;
+}>>
 
 export type CustomInputProps = Omit<InputProps, 'validations' | 'typeValue' | 'value'>

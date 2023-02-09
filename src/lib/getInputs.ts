@@ -5,8 +5,11 @@ import { forms } from '../lib';
 
 type YupBoolean = Yup.BooleanSchema<boolean | undefined, AnyObject, boolean | undefined>
 type YupString = Yup.StringSchema<string | undefined, AnyObject, string | undefined>
+type YupNumber = Yup.NumberSchema<number | undefined, AnyObject, number | undefined>
 
-const generateValidations = (field: InputProps) => {
+const generateValidations = (field: InputProps): YupBoolean | YupString | YupNumber | null => {
+
+    if (!field.validations) return null
 
     let schema = Yup[field.typeValue || 'string']()
 
@@ -14,8 +17,8 @@ const generateValidations = (field: InputProps) => {
         switch (rule.type) {
             case 'isTrue': schema = (schema as YupBoolean).isTrue(rule.message); break;
             case 'isEmail': schema = (schema as YupString).email(rule.message); break;
-            case 'minLength': schema = (schema as YupString).min(rule?.value as number, rule.message); break;
-            case 'oneOf': schema = (schema as YupString).oneOf([Yup.ref((rule as any).ref)], rule.message); break;
+            case 'minLength': schema = (schema as YupString).min(rule.value as number, rule.message); break;
+            case 'oneOf': schema = (schema as YupString).oneOf([Yup.ref(rule.ref as string)], rule.message); break;
             default: schema = schema.required(rule.message); break;
         }
     }
@@ -24,7 +27,7 @@ const generateValidations = (field: InputProps) => {
 }
 
 
-export const getInputs = (section: FormSection) => {
+export const getInputs = <T>(section: FormSection) => {
 
     let initialValues: { [key: string]: any } = {};
 
@@ -43,7 +46,7 @@ export const getInputs = (section: FormSection) => {
 
     return {
         validationSchema: Yup.object({ ...validationsFields }),
-        initialValues,
+        initialValues: initialValues as T,
         inputs: forms[section],
     };
 
